@@ -1,0 +1,39 @@
+{
+  "name": "@kestrel/liquid-html-parser",
+  "version": "2.12.2",
+  "description": "Liquid HTML parser by Kestrel",
+  "homepage": "https://github.com/kestrel-labs/kestrel-theme-tools/tree/main/packages/liquid-html-parser#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kestrel-labs/kestrel-theme-tools.git",
+    "directory": "packages/liquid-html-parser"
+  },
+  "bugs": {
+    "url": "https://github.com/kestrel-labs/kestrel-theme-tools/issues"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public",
+    "@kestrel:registry": "https://registry.npmjs.org"
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.ts"
+  ],
+  "scripts": {
+    "build": "pnpm build:ts",
+    "build:ci": "pnpm build",
+    "build:ts": "tsc -p tsconfig.build.json",
+    "type-check": "tsc --noEmit",
+    "test": "vitest --root ../.. --run src/**/*.test.ts"
+  },
+  "dependencies": {
+    "line-column": "^1.0.2"
+  },
+  "devDependencies": {
+    "@types/line-column": "^1.0.0",
+    "@types/node": "^22.18.8",
+    "yaml": "^2.8.3"
+  }
+}
