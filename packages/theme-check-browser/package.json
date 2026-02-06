@@ -1,0 +1,29 @@
+{
+  "name": "@kestrel/theme-check-browser",
+  "version": "4.0.2",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "homepage": "https://github.com/kestrel-labs/kestrel-theme-tools/tree/main/packages/theme-check-browser#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kestrel-labs/kestrel-theme-tools.git",
+    "directory": "packages/theme-check-browser"
+  },
+  "bugs": {
+    "url": "https://github.com/kestrel-labs/kestrel-theme-tools/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "@kestrel:registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "build": "pnpm build:ts",
+    "build:ci": "pnpm build",
+    "build:ts": "tsc -b tsconfig.build.json",
+    "test": "vitest",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@kestrel/theme-check-common": "workspace:4.0.2"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "@kestrel/theme-check-docs-updater",
+  "version": "4.0.2",
+  "description": "Scripts to initialize theme-check data with assets from the theme-liquid-docs repo.",
+  "main": "dist/index.js",
+  "homepage": "https://github.com/kestrel-labs/kestrel-theme-tools/tree/main/packages/theme-check-docs-updater#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kestrel-labs/kestrel-theme-tools.git",
+    "directory": "packages/theme-check-docs-updater"
+  },
+  "bugs": {
+    "url": "https://github.com/kestrel-labs/kestrel-theme-tools/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "@kestrel:registry": "https://registry.npmjs.org"
+  },
+  "bin": {
+    "theme-docs": "scripts/cli.js"
+  },
+  "scripts": {
+    "build": "pnpm build:ts",
+    "build:ci": "pnpm build",
+    "build:ts": "tsc -b tsconfig.build.json",
+    "postbuild": "node scripts/cli.js download data",
+    "test": "vitest",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@kestrel/theme-check-common": "workspace:^4.0.2",
+    "env-paths": "^2.2.1",
+    "node-fetch": "^2.6.11"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.6.4"
+  }
+}
