@@ -1,0 +1,23 @@
+{
+  "extends": "../../../tsconfig.json",
+  "include": [
+    "./**/*.ts"
+  ],
+  "compilerOptions": {
+    "outDir": "../dist",
+    "rootDir": ".",
+    "tsBuildInfoFile": "../dist/tsconfig.tsbuildinfo",
+    "lib": ["es2022", "dom"],
+    "paths": {
+      "@kestrel/theme-check-common": ["../../theme-check-common/src"],
+      "@kestrel/liquid-html-parser": ["../../liquid-html-parser/src"],
+      "@kestrel/theme-graph": ["../../theme-graph/src"]
+    }
+  },
+  "references": [
+    { "path": ".." },
+    { "path": "../../theme-check-common" },
+    { "path": "../../liquid-html-parser" },
+    { "path": "../../theme-graph" }
+  ]
+}
