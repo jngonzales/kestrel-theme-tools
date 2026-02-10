@@ -1,0 +1,31 @@
+import { ThemeLiquidDocsManager } from '@kestrel/theme-check-docs-updater';
+import { AbstractFileSystem, LoadConfigOptions, NodeFileSystem } from '@kestrel/theme-check-node';
+import { startServer as startCoreServer } from '@kestrel/theme-language-server-common';
+import { stdin, stdout } from 'node:process';
+import { createConnection } from 'vscode-languageserver/node';
+import { loadConfig } from './dependencies';
+import { fetchMetafieldDefinitionsForURI } from './metafieldDefinitions';
+
+export { NodeFileSystem } from '@kestrel/theme-check-node';
+export * from '@kestrel/theme-language-server-common';
+
+export const getConnection = () => createConnection(stdin, stdout);
+
+export function startServer(
+  connection = getConnection(),
+  fs: AbstractFileSystem = NodeFileSystem,
+  options: LoadConfigOptions = {},
+) {
+  // Using console.error to not interfere with messages sent on STDIN/OUT
+  const log = (message: string) => console.error(message);
+  const themeLiquidDocsManager = new ThemeLiquidDocsManager(log);
+
+  startCoreServer(connection, {
+    fs,
+    log,
+    loadConfig: (uri, fs) => loadConfig(uri, fs, options),
+    themeDocset: themeLiquidDocsManager,
+    jsonValidationSet: themeLiquidDocsManager,
+    fetchMetafieldDefinitionsForURI,
+  });
+}
