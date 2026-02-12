@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM"],
+    "sourceMap": true,
+    "rootDir": ".",
+    "baseUrl": ".",
+    "outDir": "../dist/browser/test",
+    "strict": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "noImplicitAny": false,
+    "types": ["mocha", "node", "webpack-env", "vscode"],
+    "paths": {
+      "@kestrel/theme-language-server-browser": ["../../theme-language-server-browser/src"],
+      "@kestrel/theme-language-server-common": ["../../theme-language-server-common/src"],
+      "@kestrel/theme-language-server-node": ["../../theme-language-server-node/src"],
+      "@kestrel/theme-check-common": ["../../theme-check-common/src"],
+      "@kestrel/prettier-plugin-liquid": ["../../prettier-plugin-liquid/src"],
+      "@kestrel/liquid-html-parser": ["../../theme-language-server-node/src"]
+    }
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules"]
+}

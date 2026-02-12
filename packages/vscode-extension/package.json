@@ -1,0 +1,284 @@
+{
+  "name": "theme-check-vscode",
+  "homepage": "https://github.com/kestrel-labs/kestrel-theme-tools/tree/main/packages/vscode-extension#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kestrel-labs/kestrel-theme-tools.git",
+    "directory": "packages/vscode-extension"
+  },
+  "bugs": {
+    "url": "https://github.com/kestrel-labs/kestrel-theme-tools/issues"
+  },
+  "version": "3.11.16",
+  "publisher": "Kestrel",
+  "private": true,
+  "displayName": "Kestrel Liquid",
+  "description": "A complete developer experience for Kestrel themes",
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Language Packs"
+  ],
+  "keywords": [
+    "liquid",
+    "kestrel",
+    "theme-check"
+  ],
+  "preview": false,
+  "icon": "images/kestrel_glyph.png",
+  "scripts": {
+    "build": "pnpm build:ci",
+    "build:ci": "pnpm build:extension && pnpm build:language-config && pnpm build:syntax",
+    "build:extension": "webpack --mode production",
+    "build:extension:dev": "webpack --mode development",
+    "build:language-config": "ts-node scripts/make-language-configuration.ts",
+    "build:syntax": "pnpm --dir ./syntaxes --ignore-workspace build",
+    "build:ts": "true",
+    "dev": "rimraf dist && pnpm dev:watch",
+    "dev:build": "webpack --mode development",
+    "dev:syntax": "pnpm --dir ./syntaxes --ignore-workspace dev",
+    "dev:watch": "webpack --mode development --watch",
+    "dev:web": "pnpm build && vscode-test-web --permission=clipboard-read --permission=clipboard-write --browserType=chromium --extensionDevelopmentPath=.",
+    "format": "prettier --write 'src/**/*.{ts,js}'",
+    "format:check": "prettier --check 'src/**/*.{js,ts}'",
+    "lint": "eslint src --ext ts",
+    "package": "vsce package --no-dependencies $npm_package_version",
+    "postinstall": "pnpm --dir ./syntaxes --ignore-workspace install --no-lockfile",
+    "prebuild": "rimraf dist language-configuration.json",
+    "preinstall": "sh scripts/fetch-syntaxes.sh",
+    "pretest": "pnpm dev:build && pnpm lint",
+    "publish:vsce": "vsce publish --no-dependencies $npm_package_version",
+    "publish:ovsx": "ovsx publish --no-dependencies",
+    "test": "vitest",
+    "pretest:web": "[ -d .tmp/dawn ] || git clone --depth 1 https://github.com/kestrel-labs/dawn.git .tmp/dawn",
+    "build:test": "webpack --config webpack.test.config.js --mode development",
+    "build:test:watch": "WATCH_MODE=1 webpack --config webpack.test.config.js --mode development --watch",
+    "test:web": "pnpm build:test && vscode-test-web --quality=stable --headless --extensionDevelopmentPath=. --extensionTestsPath=./dist/browser/test/suite/index.js .tmp/dawn",
+    "test:web:watch": "vscode-test-web --open-devtools --extensionDevelopmentPath=. --extensionTestsPath=./dist/browser/test/suite/index.js .tmp/dawn",
+    "type-check:test": "tsc --project test/tsconfig.json --noEmit",
+    "type-check": "tsc --noEmit"
+  },
+  "engines": {
+    "vscode": "^1.104.0"
+  },
+  "dependencies": {
+    "@kestrel/liquid-html-parser": "workspace:^2.12.2",
+    "@kestrel/prettier-plugin-liquid": "workspace:^1.11.6",
+    "@kestrel/theme-check-common": "workspace:^4.0.2",
+    "@kestrel/theme-language-server-browser": "workspace:^3.0.2",
+    "@kestrel/theme-language-server-common": "workspace:^3.0.2",
+    "@kestrel/theme-language-server-node": "workspace:^3.0.2",
+    "prettier": "^2.6.2",
+    "vscode-languageclient": "^8.1.0",
+    "vscode-languageserver": "^8.1.0",
+    "vscode-uri": "^3.0.8"
+  },
+  "devDependencies": {
+    "@kestrel/theme-check-docs-updater": "workspace:^4.0.2",
+    "@kestrel/theme-check-node": "workspace:^4.0.2",
+    "@types/glob": "^8.0.0",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^22",
+    "@types/prettier": "^2.4.2",
+    "@types/vscode": "^1.104.0",
+    "@types/webpack-env": "^1.18.0",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "@vscode/test-electron": "^2.2.0",
+    "@vscode/test-web": "^0.0.78",
+    "@vscode/vsce": "^2.21.0",
+    "assert": "^2.1.0",
+    "chai": "^4.3.4",
+    "eslint": "^8.28.0",
+    "eslint-config-prettier": "^8.3.0",
+    "mocha": "^10.2.0",
+    "ovsx": "^0.10.4",
+    "process": "^0.11.10",
+    "rimraf": "^3.0.2",
+    "vscode-test": "^1.3.0"
+  },
+  "activationEvents": [
+    "workspaceContains:**/.theme-check.yml",
+    "workspaceContains:**/*.liquid"
+  ],
+  "main": "./dist/node/extension.js",
+  "browser": "./dist/browser/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "kestrelLiquid.restart",
+        "title": "Liquid Theme Check: Restart Server"
+      },
+      {
+        "command": "kestrelLiquid.runChecks",
+        "title": "Liquid Theme Check: Run Checks"
+      },
+      {
+        "command": "kestrelLiquid.deadCode",
+        "title": "Liquid Theme Check: Find dead code"
+      },
+      {
+        "command": "kestrelLiquid.openLocation",
+        "title": "Open text document at location"
+      }
+    ],
+    "configuration": {
+      "title": "Kestrel Liquid | Syntax Highlighting & Linter by Kestrel",
+      "properties": {
+        "kestrelLiquid.trace.server": {
+          "type": [
+            "string"
+          ],
+          "description": "Traces the communication between the client and the server.",
+          "default": "off",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ]
+        },
+        "themeCheck.customChecks": {
+          "type": "string",
+          "scope": "application",
+          "default": "prompt",
+          "enum": [
+            "prompt",
+            "disabled"
+          ],
+          "enumDescriptions": [
+            "Ask for explicit permission to run custom checks in each language-server session. Workspace trust is also required.",
+            "Keep custom checks disabled without asking for permission. Built-in checks still run."
+          ],
+          "markdownDescription": "Controls custom JavaScript checks in the desktop extension. Permission is never remembered across language-server sessions. Changing this setting restarts the language server and clears session decisions. This setting can only be configured in User settings; theme workspace settings cannot grant execution permission."
+        },
+        "themeCheck.checkOnOpen": {
+          "type": [
+            "boolean"
+          ],
+          "description": "When true, theme check runs on file open.",
+          "default": true
+        },
+        "themeCheck.checkOnChange": {
+          "type": [
+            "boolean"
+          ],
+          "description": "When true, theme check runs on file change.",
+          "default": true
+        },
+        "themeCheck.checkOnSave": {
+          "type": [
+            "boolean"
+          ],
+          "description": "When true, theme check runs on file save.",
+          "default": true
+        },
+        "themeCheck.preloadOnBoot": {
+          "type": [
+            "boolean"
+          ],
+          "description": "When true, theme check preloads all the files from your theme for fast rename handling and theme graph generation.",
+          "default": true
+        }
+      }
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "kestrel.themeGraph.references",
+          "name": "References",
+          "icon": "$(references)",
+          "when": "kestrel.themeGraph.references.enabled"
+        },
+        {
+          "id": "kestrel.themeGraph.dependencies",
+          "name": "Dependencies",
+          "icon": "$(outline-view-icon)",
+          "when": "kestrel.themeGraph.dependencies.enabled"
+        }
+      ]
+    },
+    "configurationDefaults": {
+      "[liquid]": {
+        "editor.formatOnType": true
+      }
+    },
+    "jsonValidation": [
+      {
+        "fileMatch": [
+          "assets/*.json",
+          "config/*.json",
+          "locales/*.json",
+          "sections/*.json",
+          "templates/**/*.json"
+        ],
+        "url": "./allowCommentsSchema.json"
+      }
+    ],
+    "languages": [
+      {
+        "id": "liquid",
+        "configuration": "./language-configuration.json",
+        "aliases": [
+          "Liquid",
+          "liquid",
+          "HTML Liquid"
+        ],
+        "extensions": [
+          ".liquid"
+        ]
+      },
+      {
+        "id": "javascript",
+        "extensions": [
+          ".js.liquid",
+          ".ts.liquid"
+        ]
+      },
+      {
+        "id": "css",
+        "extensions": [
+          ".css.liquid"
+        ]
+      },
+      {
+        "id": "scss",
+        "extensions": [
+          ".scss.liquid",
+          ".sass.liquid"
+        ]
+      },
+      {
+        "id": "jsonc",
+        "filenamePatterns": [
+          "**/assets/*.json",
+          "**/config/*.json",
+          "**/locales/*.json",
+          "**/sections/*.json",
+          "**/templates/**/*.json"
+        ]
+      }
+    ],
+    "grammars": [
+      {
+        "language": "liquid",
+        "scopeName": "text.html.liquid",
+        "path": "./syntaxes/grammars/liquid.tmLanguage.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.css": "css",
+          "meta.embedded.block.js": "javascript"
+        }
+      },
+      {
+        "path": "./syntaxes/grammars/liquid-injection.tmLanguage.json",
+        "scopeName": "liquid.injection",
+        "embeddedLanguages": {
+          "meta.object.liquid": "liquid",
+          "meta.tag.liquid": "liquid"
+        },
+        "injectTo": [
+          "text.html.liquid"
+        ]
+      }
+    ]
+  }
+}
