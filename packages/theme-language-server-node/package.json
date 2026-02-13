@@ -1,0 +1,40 @@
+{
+  "name": "@kestrel/theme-language-server-node",
+  "version": "3.0.2",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "homepage": "https://github.com/kestrel-labs/kestrel-theme-tools/tree/main/packages/theme-language-server-node#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kestrel-labs/kestrel-theme-tools.git",
+    "directory": "packages/theme-language-server-node"
+  },
+  "bugs": {
+    "url": "https://github.com/kestrel-labs/kestrel-theme-tools/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "@kestrel:registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "build": "pnpm build:ts",
+    "build:ci": "pnpm build",
+    "build:ts": "tsc -b tsconfig.build.json",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@kestrel/theme-check-docs-updater": "workspace:^4.0.2",
+    "@kestrel/theme-check-node": "workspace:^4.0.2",
+    "@kestrel/theme-language-server-common": "workspace:3.0.2",
+    "glob": "^8.0.3",
+    "node-fetch": "^2.6.11",
+    "vscode-languageserver": "^8.0.2",
+    "vscode-uri": "^3.0.7"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.6.4",
+    "mktemp": "^1.0.1"
+  }
+}

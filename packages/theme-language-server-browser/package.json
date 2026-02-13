@@ -1,0 +1,31 @@
+{
+  "name": "@kestrel/theme-language-server-browser",
+  "version": "3.0.2",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "homepage": "https://github.com/kestrel-labs/kestrel-theme-tools/tree/main/packages/theme-language-server-browser#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kestrel-labs/kestrel-theme-tools.git",
+    "directory": "packages/theme-language-server-browser"
+  },
+  "bugs": {
+    "url": "https://github.com/kestrel-labs/kestrel-theme-tools/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "@kestrel:registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "build": "pnpm build:ts",
+    "build:ci": "pnpm build",
+    "build:ts": "tsc -b tsconfig.build.json",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@kestrel/theme-language-server-common": "workspace:3.0.2",
+    "vscode-languageserver": "^8.0.2"
+  }
+}
