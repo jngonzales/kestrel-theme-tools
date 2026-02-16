@@ -1,0 +1,41 @@
+{
+  "name": "@kestrel/theme-graph",
+  "version": "0.3.9",
+  "description": "Kestrel Theme Graph as a data structure",
+  "homepage": "https://github.com/kestrel-labs/kestrel-theme-tools/tree/main/packages/theme-graph#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kestrel-labs/kestrel-theme-tools.git",
+    "directory": "packages/theme-graph"
+  },
+  "bugs": {
+    "url": "https://github.com/kestrel-labs/kestrel-theme-tools/issues"
+  },
+  "bin": {
+    "theme-graph": "bin/theme-graph"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public",
+    "@kestrel:registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "build": "pnpm build:ts",
+    "build:ci": "pnpm build",
+    "build:ts": "tsc -p tsconfig.build.json",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@kestrel/liquid-html-parser": "workspace:^2.12.2",
+    "@kestrel/theme-check-common": "workspace:^4.0.2",
+    "acorn": "^8.14.1",
+    "acorn-walk": "^8.3.4",
+    "vscode-uri": "^3.0.7"
+  },
+  "devDependencies": {
+    "@kestrel/theme-check-node": "workspace:^4.0.2",
+    "@types/node": "^22.18.8",
+    "yaml": "^2.8.3"
+  }
+}

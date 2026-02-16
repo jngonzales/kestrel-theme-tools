@@ -1,0 +1,31 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": [
+    "./src/**/*.ts",
+    "./src/**/*.json"
+  ],
+  "exclude": [
+    "./dist"
+  ],
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
+    "paths": {
+      "@kestrel/liquid-html-parser": [
+        "../liquid-html-parser/src"
+      ],
+      "@kestrel/theme-check-common": [
+        "../theme-check-common/src"
+      ],
+    }
+  },
+  "references": [
+    {
+      "path": "../theme-check-common"
+    },
+    {
+      "path": "../liquid-html-parser"
+    }
+  ]
+}
