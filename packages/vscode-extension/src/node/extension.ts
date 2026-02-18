@@ -1,0 +1,152 @@
+import { FileStat, FileTuple, path as pathUtils } from '@kestrel/theme-check-common';
+import * as path from 'node:path';
+import { commands, ExtensionContext, languages, Uri, workspace } from 'vscode';
+import {
+  DocumentSelector,
+  LanguageClient,
+  LanguageClientOptions,
+  ServerOptions,
+  TransportKind,
+} from 'vscode-languageclient/node';
+import { documentSelectors } from '../common/constants';
+import LiquidFormatter from '../common/formatter';
+import { vscodePrettierFormat } from './formatter';
+import {
+  createReferencesTreeView,
+  setupContext,
+  watchReferencesTreeViewConfig,
+} from '../common/ReferencesProvider';
+import { makeDeadCode, openLocation } from '../common/commands';
+
+import { CustomCheckPermissionRequest } from '@kestrel/theme-language-server-common';
+import {
+  makeCustomCheckPermissionHandler,
+  watchCustomCheckConfiguration,
+} from './customCheckConsent';
+
+const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
+let client: LanguageClient | undefined;
+let pendingRestart: Promise<void> | undefined;
+
+export async function activate(context: ExtensionContext) {
+  const runChecksCommand = 'themeCheck/runChecks';
+
+  context.subscriptions.push(
+    commands.registerCommand('kestrelLiquid.restart', () => restartServer(context)),
+    watchCustomCheckConfiguration(() => {
+      restartServer(context).catch((error) => {
+        console.error('Failed to restart Theme Check after changing custom check settings', error);
+      });
+    }),
+    commands.registerCommand('kestrelLiquid.runChecks', () => {
+      client!.sendRequest('workspace/executeCommand', { command: runChecksCommand });
+    }),
+    commands.registerCommand('kestrelLiquid.openLocation', openLocation),
+    languages.registerDocumentFormattingEditProvider(
+      [{ language: 'liquid' }],
+      new LiquidFormatter(vscodePrettierFormat),
+    ),
+  );
+
+  await startServer(context);
+
+  if (client) {
+    setupContext();
+    context.subscriptions.push(
+      commands.registerCommand('kestrelLiquid.deadCode', makeDeadCode(client)),
+      createReferencesTreeView('kestrel.themeGraph.references', context, client, 'references'),
+      createReferencesTreeView('kestrel.themeGraph.dependencies', context, client, 'dependencies'),
+      watchReferencesTreeViewConfig(),
+    );
+  }
+}
+
+export function deactivate() {
+  return stopServer();
+}
+
+async function startServer(context: ExtensionContext) {
+  const serverOptions = await getServerOptions(context);
+  console.info(
+    'kestrel.theme-check-vscode Server options %s',
+    JSON.stringify(serverOptions, null, 2),
+  );
+  if (!serverOptions) {
+    return;
+  }
+
+  const clientOptions: LanguageClientOptions = {
+    documentSelector: documentSelectors as DocumentSelector,
+  };
+
+  client = new LanguageClient(
+    'kestrelLiquid',
+    'Theme Check Language Server',
+    serverOptions,
+    clientOptions,
+  );
+
+  client.onRequest('fs/readDirectory', async (uriString: string): Promise<FileTuple[]> => {
+    const results = await workspace.fs.readDirectory(Uri.parse(uriString));
+    return results.map(([name, type]) => [pathUtils.join(uriString, name), type]);
+  });
+
+  client.onRequest('fs/readFile', async (uriString: string): Promise<string> => {
+    const bytes = await workspace.fs.readFile(Uri.parse(uriString));
+    return Buffer.from(bytes).toString('utf8');
+  });
+
+  client.onRequest('fs/stat', async (uriString: string): Promise<FileStat> => {
+    return workspace.fs.stat(Uri.parse(uriString));
+  });
+
+  client.onRequest(CustomCheckPermissionRequest.type, makeCustomCheckPermissionHandler());
+
+  client.start();
+}
+
+async function stopServer() {
+  try {
+    if (client) {
+      await Promise.race([client.stop(), sleep(1000)]);
+    }
+  } catch (e) {
+    console.error(e);
+  } finally {
+    client = undefined;
+  }
+}
+
+function restartServer(context: ExtensionContext): Promise<void> {
+  // Coalesce overlapping commands and settings changes into one new server session.
+  if (!pendingRestart) {
+    pendingRestart = (async () => {
+      if (client) {
+        await stopServer();
+      }
+      await startServer(context);
+    })().finally(() => {
+      pendingRestart = undefined;
+    });
+  }
+  return pendingRestart;
+}
+
+async function getServerOptions(context: ExtensionContext): Promise<ServerOptions | undefined> {
+  const serverModule = context.asAbsolutePath(path.join('dist', 'node', 'server.js'));
+  return {
+    run: {
+      module: serverModule,
+      transport: TransportKind.stdio,
+    },
+    debug: {
+      module: serverModule,
+      transport: TransportKind.stdio,
+      options: {
+        // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
+        execArgv: ['--nolazy', '--inspect=6009'],
+      },
+    },
+  };
+}
