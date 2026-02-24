@@ -1,0 +1,27 @@
+check: CdnPreconnect
+severity: error
+cases:
+  - name: should report preconnect to cdn.kestrel.com
+    files:
+      file.liquid: |
+        <link rel="preconnect" href="https://cdn.kestrel.com/"/>
+    offenses:
+      - file: file.liquid
+        message: Preconnecting to cdn.kestrel.com is unnecessary and can lead to worse performance
+        start: [0, 0]
+        highlight: '<link rel="preconnect" href="https://cdn.kestrel.com/"/>'
+  - name: should report crossorigin preconnect to cdn.kestrel.com
+    files:
+      file.liquid: |
+        <link rel="preconnect" href="https://cdn.kestrel.com/" crossorigin/>
+    offenses:
+      - file: file.liquid
+        message: Preconnecting to cdn.kestrel.com is unnecessary and can lead to worse performance
+        start: [0, 0]
+        highlight: '<link rel="preconnect" href="https://cdn.kestrel.com/" crossorigin/>'
+  - name: should not report other link types
+    files:
+      file.liquid: |
+        <link rel="preload" href="https://example.com/foo.css" as="style"/>
+        <link rel="stylesheet" href="https://example.com/bar.css"/>
+        <link rel="icon"/>
