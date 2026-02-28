@@ -2,12 +2,9 @@
 
 <p align="center">Lint, format, complete and navigate Liquid themes. One parser, one language server, three runtimes (Node, browser, VS Code).</p>
 
-## Demo
+## Preview
 
-<video src="docs/assets/demo.mp4" poster="docs/assets/demo.jpg" controls muted playsinline preload="metadata" width="900"></video>
-
-If the player does not load, open [docs/assets/demo.mp4](docs/assets/demo.mp4).
-
+https://github.com/user-attachments/assets/9105e0d1-828a-412b-bbd0-35c8ad0dbf45
 ## What is in here
 
 | Package | What it does |
